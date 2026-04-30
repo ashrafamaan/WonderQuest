@@ -17,7 +17,7 @@
         <div class="top-controls" style="display: flex; gap: 10px; align-items: center;">
             <button id="tts-toggle" class="top-btn">🔇 Read Aloud: OFF</button>
             <button id="dashboard-btn" class="top-btn">📊 Progress Dashboard</button>
-            <button id="api-key-btn" title="Set/Change API Key" class="top-btn">🔑 API Key</button>
+            <button id="api-key-btn" title="Settings" class="top-btn">⚙️ Settings</button>
             <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
         </div>
     </div>
@@ -49,15 +49,28 @@
         </div>
     </div>
 
-    <!-- API Key Modal -->
+    <!-- Settings Modal -->
     <div id="api-key-modal" class="modal-overlay hidden">
         <div class="modal-content" style="text-align: center; max-width: 400px;">
             <button id="close-api-modal" class="close-btn">&times;</button>
-            <h2>Welcome! 👋</h2>
-            <p style="margin-bottom: 15px;">To use the smart tutor, please enter your Gemini API Key.</p>
-            <p style="font-size: 0.9em; margin-bottom: 20px;">Don't have one? <a href="https://aistudio.google.com/app/api-keys" target="_blank" style="color: var(--border-color); font-weight: bold;">Get it here for free</a></p>
-            <input type="password" id="api-key-input" placeholder="Paste your API key here..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
-            <button id="save-api-key-btn" class="top-btn" style="width: 100%; padding: 15px; font-size: 1.1em;">Save API Key</button>
+            <h2>Settings ⚙️</h2>
+            <p style="margin-bottom: 15px;">Choose your AI Provider.</p>
+            
+            <div style="margin-bottom: 20px; display: flex; justify-content: center; gap: 15px;">
+                <label style="cursor: pointer;"><input type="radio" name="ai-provider" value="gemini" checked> Gemini (Cloud)</label>
+                <label style="cursor: pointer;"><input type="radio" name="ai-provider" value="ollama"> Ollama (Offline)</label>
+            </div>
+
+            <div id="gemini-settings">
+                <p style="font-size: 0.9em; margin-bottom: 10px;">Don't have a Gemini key? <a href="https://aistudio.google.com/app/api-keys" target="_blank" style="color: var(--border-color); font-weight: bold;">Get it here</a></p>
+                <input type="password" id="api-key-input" placeholder="Paste your Gemini API key here..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+            </div>
+
+            <div id="ollama-settings" style="display: none;">
+                <input type="text" id="ollama-model-input" placeholder="Model name (e.g., llama3)" value="llama3" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+            </div>
+
+            <button id="save-api-key-btn" class="top-btn" style="width: 100%; padding: 15px; font-size: 1.1em;">Save Settings</button>
         </div>
     </div>
 

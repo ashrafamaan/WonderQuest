@@ -1,4 +1,6 @@
 let API_KEY = localStorage.getItem('gemini_api_key') || '';
+let AI_PROVIDER = localStorage.getItem('ai_provider') || 'gemini';
+let OLLAMA_MODEL = localStorage.getItem('ollama_model') || 'llama3';
 const answerText = document.getElementById('answer-text');
 const userInput = document.getElementById('user-input');
 const typingIndicator = document.getElementById('typing');
@@ -217,7 +219,11 @@ if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         userInput.placeholder = "Ask me anything and see the magic! ✨";
         
         if (event.error === 'network') {
-            alert("Voice error! If you are opening this file directly (file:///), Chrome blocks the microphone for security. Try using a local web server (like VSCode Live Server) or open it in Microsoft Edge.");
+            if (window.location.protocol === 'file:') {
+                alert("Voice error! If you are opening this file directly (file:///), Chrome blocks the microphone for security. Try using a local web server.");
+            } else {
+                alert("Voice error! Your browser (like Brave) or an ad-blocker is blocking the speech recognition service. Please try using standard Google Chrome or Microsoft Edge, or check your browser's privacy settings.");
+            }
         } else if (event.error === 'not-allowed') {
             alert("Microphone access denied. Please click the lock icon in your URL bar and allow microphone access.");
         } else if (event.error !== 'no-speech') {
@@ -247,8 +253,8 @@ async function sendMessage() {
     const message = userInput.value.trim();
     if (!message) return;
 
-    if (!API_KEY) {
-        if (typeof openApiKeyModal === 'function') openApiKeyModal();
+    if (AI_PROVIDER === 'gemini' && !API_KEY) {
+        if (typeof openSettingsModal === 'function') openSettingsModal();
         return;
     }
 
@@ -263,29 +269,51 @@ async function sendMessage() {
     typingIndicator.style.display = 'block';
 
     try {
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [
-                    ...chatHistory,
-                    { role: "user", parts: [{ text: message }] }
-                ],
-                generationConfig: { temperature: 1, topP: 0.95, topK: 40, maxOutputTokens: 8192 }
-            })
-        });
+        let botResponse = "";
 
-        const data = await response.json();
-        
-        if (data.error) {
-            throw new Error(data.error.message);
-        }
-        
-        if (!data.candidates || data.candidates.length === 0) {
-            throw new Error("Response was blocked by safety filters or was empty.");
-        }
+        if (AI_PROVIDER === 'gemini') {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [
+                        ...chatHistory,
+                        { role: "user", parts: [{ text: message }] }
+                    ],
+                    generationConfig: { temperature: 1, topP: 0.95, topK: 40, maxOutputTokens: 8192 }
+                })
+            });
 
-        let botResponse = data.candidates[0].content.parts[0].text;
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            if (!data.candidates || data.candidates.length === 0) throw new Error("Response was blocked by safety filters or was empty.");
+            
+            botResponse = data.candidates[0].content.parts[0].text;
+            
+        } else if (AI_PROVIDER === 'ollama') {
+            const ollamaMessages = chatHistory.map(msg => ({
+                role: msg.role === 'model' ? 'assistant' : 'user',
+                content: msg.parts[0].text
+            }));
+            ollamaMessages.push({ role: 'user', content: message });
+
+            const response = await fetch('http://localhost:11434/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: OLLAMA_MODEL,
+                    messages: ollamaMessages,
+                    stream: false
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error("Could not connect to Ollama. Make sure it is running and OLLAMA_ORIGINS=\"*\" is set.");
+            }
+
+            const data = await response.json();
+            botResponse = data.message.content;
+        }
         
         // Detect ||CORRECT|| tag
         if (botResponse.includes('||CORRECT||')) {
@@ -439,43 +467,73 @@ darkModeToggle.addEventListener('click', () => {
 // Init
 loadState();
 
-// API Key Management
+// Settings Modal Logic
 const apiKeyBtn = document.getElementById('api-key-btn');
 const apiKeyModal = document.getElementById('api-key-modal');
 const closeApiModal = document.getElementById('close-api-modal');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const apiKeyInput = document.getElementById('api-key-input');
+const ollamaModelInput = document.getElementById('ollama-model-input');
+const providerRadios = document.querySelectorAll('input[name="ai-provider"]');
+const geminiSettings = document.getElementById('gemini-settings');
+const ollamaSettings = document.getElementById('ollama-settings');
 
-function openApiKeyModal() {
+function updateSettingsVisibility() {
+    const selectedProvider = document.querySelector('input[name="ai-provider"]:checked').value;
+    if (selectedProvider === 'gemini') {
+        if (geminiSettings) geminiSettings.style.display = 'block';
+        if (ollamaSettings) ollamaSettings.style.display = 'none';
+    } else {
+        if (geminiSettings) geminiSettings.style.display = 'none';
+        if (ollamaSettings) ollamaSettings.style.display = 'block';
+    }
+}
+
+function openSettingsModal() {
     if (apiKeyInput) apiKeyInput.value = API_KEY;
+    if (ollamaModelInput) ollamaModelInput.value = OLLAMA_MODEL;
+    
+    if (providerRadios) {
+        providerRadios.forEach(radio => {
+            if (radio.value === AI_PROVIDER) radio.checked = true;
+        });
+    }
+    updateSettingsVisibility();
+    
     if (apiKeyModal) apiKeyModal.classList.remove('hidden');
 }
 
-function closeApiKeyModal() {
+function closeSettingsModal() {
     if (apiKeyModal) apiKeyModal.classList.add('hidden');
 }
 
-if (apiKeyBtn) {
-    apiKeyBtn.addEventListener('click', openApiKeyModal);
-}
-
-if (closeApiModal) {
-    closeApiModal.addEventListener('click', closeApiKeyModal);
-}
-
-if (saveApiKeyBtn) {
-    saveApiKeyBtn.addEventListener('click', () => {
-        API_KEY = apiKeyInput.value.trim();
-        localStorage.setItem('gemini_api_key', API_KEY);
-        closeApiKeyModal();
+if (providerRadios) {
+    providerRadios.forEach(radio => {
+        radio.addEventListener('change', updateSettingsVisibility);
     });
 }
 
-function checkApiKey() {
-    if (!API_KEY) {
-        setTimeout(() => {
-            openApiKeyModal();
-        }, 1000);
+if (apiKeyBtn) apiKeyBtn.addEventListener('click', openSettingsModal);
+if (closeApiModal) closeApiModal.addEventListener('click', closeSettingsModal);
+
+if (saveApiKeyBtn) {
+    saveApiKeyBtn.addEventListener('click', () => {
+        const checkedRadio = document.querySelector('input[name="ai-provider"]:checked');
+        if (checkedRadio) AI_PROVIDER = checkedRadio.value;
+        if (apiKeyInput) API_KEY = apiKeyInput.value.trim();
+        if (ollamaModelInput) OLLAMA_MODEL = ollamaModelInput.value.trim() || 'llama3';
+        
+        localStorage.setItem('ai_provider', AI_PROVIDER);
+        localStorage.setItem('gemini_api_key', API_KEY);
+        localStorage.setItem('ollama_model', OLLAMA_MODEL);
+        
+        closeSettingsModal();
+    });
+}
+
+function checkSettings() {
+    if (AI_PROVIDER === 'gemini' && !API_KEY) {
+        setTimeout(openSettingsModal, 1000);
     }
 }
-checkApiKey();
+checkSettings();
