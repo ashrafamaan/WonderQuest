@@ -67,7 +67,40 @@
             </div>
 
             <div id="ollama-settings" style="display: none;">
-                <input type="text" id="ollama-model-input" placeholder="Model name (e.g., llama3)" value="llama3" style="width: 100%; padding: 10px; margin-bottom: 20px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+                <input type="text" id="ollama-model-input" placeholder="Model name (e.g., deepseek-r1:8b)" value="deepseek-r1:8b" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+                
+                <details style="text-align: left; background: var(--input-bg); padding: 10px; border-radius: 8px; font-size: 0.85em; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                    <summary style="font-weight: bold; color: var(--border-color); cursor: pointer; outline: none; margin-bottom: 5px;">Offline bot setup</summary>
+                    
+                    <div class="hide-scrollbar" style="margin-top: 10px; max-height: 200px; overflow-y: auto;">
+                        <strong>1. Download Ollama & Model</strong>
+                        <ol style="margin-top: 4px; margin-bottom: 10px; padding-left: 20px;">
+                            <li>Install from <a href="https://ollama.com" target="_blank" style="color: var(--border-color);">ollama.com</a></li>
+                            <li>Open Terminal/Command Prompt</li>
+                            <li>Run: <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 4px;">ollama pull deepseek-r1:8b</code> (or your chosen model)</li>
+                        </ol>
+
+                        <strong>2. Allow Cross-Origin Requests (CORS)</strong>
+                        <ol style="margin-top: 4px; margin-bottom: 10px; padding-left: 20px;">
+                            <li>Quit the Ollama app (right-click the llama icon in your system tray > Quit).</li>
+                            <li>Open Windows Start Menu > search "Environment Variables" > click "Edit the system environment variables".</li>
+                            <li>Click "Environment Variables..."</li>
+                            <li>Under "User variables", click "New..."</li>
+                            <li>Variable Name: <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 4px;">OLLAMA_ORIGINS</code></li>
+                            <li>Variable Value: <code style="background: rgba(0,0,0,0.1); padding: 2px 4px; border-radius: 4px;">*</code></li>
+                            <li>Click OK on all windows, then open Ollama from the Start Menu to restart it.</li>
+                        </ol>
+
+                        <strong>3. Allow Insecure Content (Browser)</strong>
+                        <ol style="margin-top: 4px; margin-bottom: 0; padding-left: 20px;">
+                            <li>Because GitHub Pages uses secure HTTPS and Ollama uses local HTTP, browsers block the connection by default.</li>
+                            <li>Click the lock/settings icon next to your website's URL in the browser address bar.</li>
+                            <li>Go to "Site settings".</li>
+                            <li>Find "Insecure content" and change it to "Allow".</li>
+                            <li>Refresh the page.</li>
+                        </ol>
+                    </div>
+                </details>
             </div>
 
             <button id="save-api-key-btn" class="top-btn" style="width: 100%; padding: 15px; font-size: 1.1em;">Save Settings</button>
