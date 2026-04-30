@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Answer Bot</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div id="top-bar">
+        <div class="stats">
+            <span id="points-display">⭐ Points: 0</span>
+            <span id="badges-display">🏆 Badges: 0</span>
+        </div>
+        <div class="top-controls" style="display: flex; gap: 10px; align-items: center;">
+            <button id="tts-toggle" class="top-btn">🔇 Read Aloud: OFF</button>
+            <button id="dashboard-btn" class="top-btn">📊 Progress Dashboard</button>
+            <button id="api-key-btn" title="Set/Change API Key" class="top-btn">🔑 API Key</button>
+            <button id="dark-mode-toggle" title="Toggle Dark Mode">🌙</button>
+        </div>
+    </div>
+
+    <div id="container">
+        <h1 class="title">WonderQuest</h1>
+
+        <div id="mode-selector">
+            <button class="mode-btn active" data-mode="general">🤖 General</button>
+            <button class="mode-btn" data-mode="math">🧮 Math</button>
+            <button class="mode-btn" data-mode="science">🔬 Science</button>
+            <button class="mode-btn" data-mode="story">📚 Storytime</button>
+        </div>
+        
+        <div id="answer-box">
+            <div id="answer-text">Welcome! Let's learn something new today. 😊</div>
+            <div class="typing-indicator" id="typing">
+                <div class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="input-container">
+            <input type="text" id="user-input" placeholder="Ask me anything and see the magic! ✨">
+            <button id="mic-btn" title="Click to speak">🎤</button>
+        </div>
+    </div>
+
+    <!-- API Key Modal -->
+    <div id="api-key-modal" class="modal-overlay hidden">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <button id="close-api-modal" class="close-btn">&times;</button>
+            <h2>Welcome! 👋</h2>
+            <p style="margin-bottom: 15px;">To use the smart tutor, please enter your Gemini API Key.</p>
+            <p style="font-size: 0.9em; margin-bottom: 20px;">Don't have one? <a href="https://aistudio.google.com/app/api-keys" target="_blank" style="color: var(--border-color); font-weight: bold;">Get it here for free</a></p>
+            <input type="password" id="api-key-input" placeholder="Paste your API key here..." style="width: 100%; padding: 10px; margin-bottom: 20px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+            <button id="save-api-key-btn" class="top-btn" style="width: 100%; padding: 15px; font-size: 1.1em;">Save API Key</button>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal -->
+    <div id="dashboard-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button id="close-dashboard" class="close-btn">&times;</button>
+            <h2>Your Learning Journey</h2>
+            
+            <div class="dashboard-sections">
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+                
+                <div class="badges-container">
+                    <h3>Your Badges</h3>
+                    <div id="badge-grid" class="badge-grid">
+                        <!-- Badges injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Badge Notification Overlay -->
+    <div id="badge-notification" class="notification hidden">
+        <div class="notification-content">
+            <h3>🎉 New Badge Unlocked! 🎉</h3>
+            <div id="new-badge-icon" class="badge-icon-large"></div>
+            <p id="new-badge-name"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
