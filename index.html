@@ -67,7 +67,14 @@
             </div>
 
             <div id="ollama-settings" style="display: none;">
-                <input type="text" id="ollama-model-input" placeholder="Model name (e.g., deepseek-r1:8b)" value="deepseek-r1:8b" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                    <select id="ollama-model-select" style="flex: 1; padding: 10px; border: 2px solid var(--border-color); border-radius: 10px; background: var(--input-bg); color: var(--text-color); font-size: 1em;">
+                        <option value="deepseek-r1:8b">deepseek-r1:8b</option>
+                        <option value="llama3">llama3</option>
+                    </select>
+                    <input type="text" id="ollama-model-input" placeholder="Custom model name..." style="display: none; flex: 1; padding: 10px; border: 2px solid var(--border-color); border-radius: 10px; box-sizing: border-box; background: var(--input-bg); color: var(--text-color);">
+                    <button id="toggle-custom-model-btn" class="top-btn" title="Toggle custom text input" style="padding: 10px; font-size: 0.9em; white-space: nowrap;">✏️ Custom</button>
+                </div>
                 
                 <details style="text-align: left; background: var(--input-bg); padding: 10px; border-radius: 8px; font-size: 0.85em; border: 1px solid var(--border-color); margin-bottom: 20px;">
                     <summary style="font-weight: bold; color: var(--border-color); cursor: pointer; outline: none; margin-bottom: 5px;">Offline bot setup</summary>

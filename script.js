@@ -474,9 +474,57 @@ const closeApiModal = document.getElementById('close-api-modal');
 const saveApiKeyBtn = document.getElementById('save-api-key-btn');
 const apiKeyInput = document.getElementById('api-key-input');
 const ollamaModelInput = document.getElementById('ollama-model-input');
+const ollamaModelSelect = document.getElementById('ollama-model-select');
+const toggleCustomModelBtn = document.getElementById('toggle-custom-model-btn');
 const providerRadios = document.querySelectorAll('input[name="ai-provider"]');
 const geminiSettings = document.getElementById('gemini-settings');
 const ollamaSettings = document.getElementById('ollama-settings');
+
+let isCustomModelInput = false;
+
+if (toggleCustomModelBtn) {
+    toggleCustomModelBtn.addEventListener('click', () => {
+        isCustomModelInput = !isCustomModelInput;
+        if (isCustomModelInput) {
+            if (ollamaModelSelect) ollamaModelSelect.style.display = 'none';
+            if (ollamaModelInput) ollamaModelInput.style.display = 'block';
+            toggleCustomModelBtn.innerHTML = '📋 List';
+            toggleCustomModelBtn.title = 'Select from list';
+        } else {
+            if (ollamaModelSelect) ollamaModelSelect.style.display = 'block';
+            if (ollamaModelInput) ollamaModelInput.style.display = 'none';
+            toggleCustomModelBtn.innerHTML = '✏️ Custom';
+            toggleCustomModelBtn.title = 'Toggle custom text input';
+        }
+    });
+}
+
+async function fetchOllamaModels() {
+    if (!ollamaModelSelect) return;
+    try {
+        const response = await fetch('http://localhost:11434/api/tags');
+        if (!response.ok) return;
+        const data = await response.json();
+        
+        if (data.models && data.models.length > 0) {
+            ollamaModelSelect.innerHTML = '';
+            data.models.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.name;
+                option.textContent = model.name;
+                ollamaModelSelect.appendChild(option);
+            });
+            
+            // Re-select current model if it exists in the fetched list
+            if (Array.from(ollamaModelSelect.options).some(opt => opt.value === OLLAMA_MODEL)) {
+                ollamaModelSelect.value = OLLAMA_MODEL;
+                if (isCustomModelInput) toggleCustomModelBtn.click(); // Switch to list mode
+            }
+        }
+    } catch (e) {
+        console.log("Could not fetch Ollama models automatically:", e);
+    }
+}
 
 function updateSettingsVisibility() {
     const selectedProvider = document.querySelector('input[name="ai-provider"]:checked').value;
@@ -492,6 +540,19 @@ function updateSettingsVisibility() {
 function openSettingsModal() {
     if (apiKeyInput) apiKeyInput.value = API_KEY;
     if (ollamaModelInput) ollamaModelInput.value = OLLAMA_MODEL;
+    if (ollamaModelSelect) {
+        if (Array.from(ollamaModelSelect.options).some(opt => opt.value === OLLAMA_MODEL)) {
+            ollamaModelSelect.value = OLLAMA_MODEL;
+            if (isCustomModelInput) toggleCustomModelBtn.click();
+        } else {
+            if (!isCustomModelInput && toggleCustomModelBtn) toggleCustomModelBtn.click();
+        }
+    }
+    
+    // Attempt to fetch fresh models from localhost
+    if (AI_PROVIDER === 'ollama') {
+        fetchOllamaModels();
+    }
     
     if (providerRadios) {
         providerRadios.forEach(radio => {
@@ -521,7 +582,11 @@ if (saveApiKeyBtn) {
         const checkedRadio = document.querySelector('input[name="ai-provider"]:checked');
         if (checkedRadio) AI_PROVIDER = checkedRadio.value;
         if (apiKeyInput) API_KEY = apiKeyInput.value.trim();
-        if (ollamaModelInput) OLLAMA_MODEL = ollamaModelInput.value.trim() || 'llama3';
+        if (isCustomModelInput && ollamaModelInput) {
+            OLLAMA_MODEL = ollamaModelInput.value.trim() || 'llama3';
+        } else if (!isCustomModelInput && ollamaModelSelect) {
+            OLLAMA_MODEL = ollamaModelSelect.value;
+        }
         
         localStorage.setItem('ai_provider', AI_PROVIDER);
         localStorage.setItem('gemini_api_key', API_KEY);
