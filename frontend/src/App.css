@@ -27,14 +27,23 @@
 body {
     font-family: 'Comic Sans MS', cursive;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background: var(--bg-gradient);
-    min-height: 100vh;
+    height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transition: background 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+#root {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: background 0.3s ease;
-    position: relative;
 }
 
 body::before {
@@ -50,32 +59,72 @@ body::before {
 }
 
 #container {
-    max-width: 800px;
-    width: 90%;
+    max-width: 1400px;
+    width: 95%;
     margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px);
+}
+
+#content-wrapper {
+    display: flex;
+    gap: 30px;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+}
+
+#main-chat-area {
+    flex: 0 1 900px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 #answer-box {
     background: var(--input-bg-alpha);
     border-radius: 20px;
     padding: 30px;
+    width: 100%;
+    box-sizing: border-box;
     margin: 20px 0;
     box-shadow: 0 10px 30px var(--shadow);
-    min-height: 200px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     border: 3px solid var(--border-color);
     transition: all 0.3s ease;
     position: relative;
     backdrop-filter: blur(5px);
 }
 
+/* Custom Scrollbar for answer-box */
+#answer-box::-webkit-scrollbar {
+    width: 8px;
+}
+#answer-box::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 20px;
+}
+#answer-box::-webkit-scrollbar-thumb {
+    background: var(--border-color-alpha);
+    border-radius: 10px;
+}
+#answer-box::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}
+
 #answer-text {
     font-size: 1.4em;
     line-height: 1.6;
     color: var(--text-color);
-    min-height: 100px;
+    margin: auto 0;
     opacity: 1;
     animation: fadeIn 0.5s ease forwards;
 }
@@ -143,9 +192,10 @@ body::before {
 .title {
     text-align: center;
     color: var(--text-color);
-    font-size: 2.5em;
-    margin-bottom: 30px;
+    font-size: 1.8em;
+    margin: 0;
     text-shadow: 2px 2px 4px var(--shadow);
+    flex: 1;
 }
 
 .typing-indicator {
@@ -211,10 +261,36 @@ body::before {
     font-size: 1.2em;
     font-weight: bold;
     color: var(--text-color);
+    flex: 1;
+    justify-content: flex-start;
 }
 
-.top-btn {
-    padding: 8px 15px;
+.top-btn, #dark-mode-toggle {
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    transition: transform 0.2s, background 0.3s ease;
+    padding: 0;
+    color: inherit;
+}
+
+.top-btn:hover, #dark-mode-toggle:hover {
+    transform: scale(1.1);
+    background: rgba(128, 128, 128, 0.2);
+}
+
+.top-btn.active {
+    background: rgba(76, 175, 80, 0.2);
+}
+
+.modal-btn {
     background: var(--border-color-alpha);
     color: white;
     border: none;
@@ -223,44 +299,19 @@ body::before {
     font-family: inherit;
     font-weight: bold;
     transition: transform 0.2s, background 0.3s ease;
-    backdrop-filter: blur(5px);
 }
 
-.top-btn:hover {
-    transform: scale(1.05);
-    background: var(--border-color);
-}
-
-.top-btn.active {
-    background: #4caf50;
-}
-
-#dark-mode-toggle {
-    background: var(--border-color-alpha);
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 18px;
-    transition: background 0.3s ease;
-    backdrop-filter: blur(5px);
-}
-
-#dark-mode-toggle:hover {
+.modal-btn:hover {
+    transform: scale(1.02);
     background: var(--border-color);
 }
 
 #mode-selector {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 15px;
     justify-content: center;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+    margin-bottom: 0;
 }
 
 .mode-btn {
@@ -421,4 +472,61 @@ body::before {
 .hide-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* Avatar Styles */
+#avatar-container {
+    text-align: left;
+    padding-left: 20px;
+    margin-bottom: -20px;
+    z-index: 10;
+    position: relative;
+    user-select: none;
+    line-height: 0;
+    height: 150px;
+    display: flex;
+    align-items: flex-end;
+}
+
+#avatar {
+    display: inline-block;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    max-width: 150px;
+    height: auto;
+    object-fit: contain;
+    vertical-align: bottom;
+}
+
+/* Talking Animation */
+#avatar.talking {
+    /* No CSS animation needed, JS handles frame swapping */
+}
+
+/* Thinking Animation */
+#avatar.thinking {
+    /* No CSS animation needed, JS handles frame swapping */
+}
+
+.chat-log-msg {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 80%;
+    word-wrap: break-word;
+    font-size: 1.1em;
+}
+
+.chat-log-msg.user {
+    background: var(--typing-bg);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+.chat-log-msg.bot {
+    background: var(--input-bg-alpha);
+    color: var(--text-color);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+    border: 1px solid var(--border-color);
 }
