@@ -130,7 +130,7 @@ export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearM
           {activeTab === 'aiProvider' && (
             <div>
               <h3 style={{ marginBottom: '20px', fontSize: '1.5em', color: 'var(--text-color)' }}>AI Provider</h3>
-              <p style={{ marginBottom: '15px' }}>Choose the AI engine powering WonderQuest.</p>
+              <p style={{ marginBottom: '15px' }}>Choose the AI engine powering <img src="/wonderquest.png" alt="WonderQuest" style={{ height: '1.2em', verticalAlign: 'middle' }} />.</p>
 
               <div style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
                 <div 

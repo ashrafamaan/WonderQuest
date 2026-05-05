@@ -428,7 +428,7 @@ function App() {
             <span id="points-display">⭐ Points: {points}</span>
             <span id="badges-display">🏆 Badges: {badges.length}</span>
         </div>
-        <h1 className="title">WonderQuest</h1>
+        <h1 className="title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src="/wonderquest.png" alt="WonderQuest" style={{ height: '50px' }} /></h1>
         <div className="top-controls" style={{display: 'flex', gap: '10px', alignItems: 'center', flex: 1, justifyContent: 'flex-end'}}>
             <button className={`top-btn ${ttsEnabled ? 'active' : ''}`} title="Toggle Read Aloud" onClick={toggleTts}>{ttsEnabled ? '🔊' : '🔇'}</button>
             <button className="top-btn" title="Chat History" onClick={openHistoryModal}>📜</button>

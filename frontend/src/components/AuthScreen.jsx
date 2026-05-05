@@ -49,7 +49,7 @@ export function AuthScreen({ onLogin }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '20px', textAlign: 'center' }}>
-      <h1 style={{ fontSize: '3em', marginBottom: '10px', color: 'var(--text-color)' }}>WonderQuest</h1>
+      <h1 style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center' }}><img src="/wonderquest.png" alt="WonderQuest" style={{ height: '2em' }} /></h1>
       <p style={{ fontSize: '1.2em', marginBottom: '30px', opacity: 0.8, color: 'var(--text-color)' }}>Your Magical AI Learning Companion</p>
       
       <div className="modal-content" style={{ width: '100%', maxWidth: '400px', padding: '30px' }}>
