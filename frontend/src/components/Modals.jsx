@@ -69,12 +69,12 @@ export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearM
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '700px', height: '550px', display: 'flex', flexDirection: 'row', padding: 0, overflow: 'hidden', color: 'var(--text-color)' }}>
+      <div className="modal-content settings-layout">
         
         {/* Sidebar */}
-        <div style={{ width: '220px', background: 'rgba(0,0,0,0.05)', padding: '20px', borderRight: '1px solid var(--border-color-alpha)' }}>
+        <div className="settings-sidebar">
           <h2 style={{ marginBottom: '20px', color: 'var(--text-color)' }}>Settings ⚙️</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div className="settings-sidebar-buttons">
             <button 
               onClick={() => setActiveTab('account')}
               style={{ fontFamily: 'inherit', padding: '10px', textAlign: 'left', background: activeTab === 'account' ? 'var(--border-color)' : 'transparent', color: activeTab === 'account' ? 'white' : 'var(--text-color)', border: 'none', borderRadius: '5px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.1em' }}
@@ -103,7 +103,7 @@ export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearM
         </div>
 
         {/* Content Area */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative' }}>
+        <div className="settings-content">
           <button onClick={onClose} className="close-btn" style={{ position: 'absolute', top: '15px', right: '20px', zIndex: 10 }}>&times;</button>
           
           {/* Scrollable Content */}

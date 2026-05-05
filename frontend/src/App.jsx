@@ -37,6 +37,7 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const talkIntervalRef = useRef(null);
   const recognitionRef = useRef(null);
   
@@ -423,7 +424,7 @@ function App() {
 
   return (
     <>
-      <div id="top-bar">
+      <div id="top-bar" className={isInputFocused ? 'hide-on-mobile' : ''}>
         <div className="stats">
             <span id="points-display">⭐ Points: {points}</span>
             <span id="badges-display">🏆 Badges: {badges.length}</span>
@@ -438,7 +439,7 @@ function App() {
         </div>
       </div>
 
-      <div id="container">
+      <div id="container" className={isInputFocused ? 'keyboard-open' : ''}>
         <div id="content-wrapper">
           <div id="main-chat-area">
             <div id="avatar-container">
@@ -464,6 +465,8 @@ function App() {
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && handleSend()}
+                  onFocus={() => setIsInputFocused(true)}
+                  onBlur={() => setIsInputFocused(false)}
                 />
                 <button 
                   id="mic-btn" 
@@ -475,7 +478,7 @@ function App() {
             </div>
           </div>
           
-          <div id="mode-selector">
+          <div id="mode-selector" className={isInputFocused ? 'hide-on-mobile' : ''}>
               <button className={`mode-btn ${currentMode === 'general' ? 'active' : ''}`} onClick={() => handleModeChange('general')}>🤖 General</button>
               <button className={`mode-btn ${currentMode === 'math' ? 'active' : ''}`} onClick={() => handleModeChange('math')}>🧮 Math</button>
               <button className={`mode-btn ${currentMode === 'science' ? 'active' : ''}`} onClick={() => handleModeChange('science')}>🔬 Science</button>
