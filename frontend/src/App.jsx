@@ -405,7 +405,7 @@ function App() {
   };
 
   if (!isAuthenticated) {
-    return <AuthScreen onLogin={(user) => {
+    return <AuthScreen isDarkMode={isDarkMode} onLogin={(user) => {
       setCurrentUser(user);
       setIsAuthenticated(true);
       // Reload progress after login
@@ -428,7 +428,7 @@ function App() {
             <span id="points-display">⭐ Points: {points}</span>
             <span id="badges-display">🏆 Badges: {badges.length}</span>
         </div>
-        <h1 className="title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src="/wonderquest.png" alt="WonderQuest" style={{ height: '50px' }} /></h1>
+        <h1 className="title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}><img src={isDarkMode ? "/wonderquest_w.png" : "/wonderquest.png"} alt="WonderQuest" style={{ height: '50px' }} /></h1>
         <div className="top-controls" style={{display: 'flex', gap: '10px', alignItems: 'center', flex: 1, justifyContent: 'flex-end'}}>
             <button className={`top-btn ${ttsEnabled ? 'active' : ''}`} title="Toggle Read Aloud" onClick={toggleTts}>{ttsEnabled ? '🔊' : '🔇'}</button>
             <button className="top-btn" title="Chat History" onClick={openHistoryModal}>📜</button>
@@ -493,6 +493,7 @@ function App() {
         onLogout={handleLogout}
         currentUser={currentUser}
         browserVoices={browserVoices}
+        isDarkMode={isDarkMode}
       />
       <DashboardModal isOpen={isDashboardOpen} onClose={() => setIsDashboardOpen(false)} points={points} badges={badges} stats={stats} />
       <HistoryModal isOpen={isHistoryOpen} onClose={() => setIsHistoryOpen(false)} allHistories={allHistories} currentMode={currentMode} />

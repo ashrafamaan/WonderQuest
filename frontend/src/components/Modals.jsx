@@ -13,7 +13,7 @@ const BADGE_DEFS = {
     point_master: { id: 'point_master', name: 'Point Master', icon: '⭐', description: 'Earned 100 points!' }
 };
 
-export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearMemory, onLogout, currentUser, browserVoices = [] }) {
+export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearMemory, onLogout, currentUser, browserVoices = [], isDarkMode }) {
   const [activeTab, setActiveTab] = React.useState('account');
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const [isVoiceDropdownOpen, setIsVoiceDropdownOpen] = React.useState(false);
@@ -130,7 +130,7 @@ export function SettingsModal({ isOpen, onClose, settings, setSettings, onClearM
           {activeTab === 'aiProvider' && (
             <div>
               <h3 style={{ marginBottom: '20px', fontSize: '1.5em', color: 'var(--text-color)' }}>AI Provider</h3>
-              <p style={{ marginBottom: '15px' }}>Choose the AI engine powering <img src="/wonderquest.png" alt="WonderQuest" style={{ height: '1.2em', verticalAlign: 'middle' }} />.</p>
+              <p style={{ marginBottom: '15px' }}>Choose the AI engine powering <img src={isDarkMode ? "/wonderquest_w.png" : "/wonderquest.png"} alt="WonderQuest" style={{ height: '1.2em', verticalAlign: 'middle' }} />.</p>
 
               <div style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
                 <div 
