@@ -38,6 +38,7 @@ function App() {
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isInputFocused, setIsInputFocused] = useState(false);
+  const [talkingFrame, setTalkingFrame] = useState(1);
   const talkIntervalRef = useRef(null);
   const recognitionRef = useRef(null);
   
@@ -124,11 +125,10 @@ function App() {
 
     const startAnimation = () => {
         setAvatarState('talking');
-        let frame = 1;
+        setTalkingFrame(1);
+        if (talkIntervalRef.current) clearInterval(talkIntervalRef.current);
         talkIntervalRef.current = setInterval(() => {
-            const av = document.getElementById('avatar');
-            if(av) av.src = `/talking${frame}.png`;
-            frame = frame >= 2 ? 1 : frame + 1;
+            setTalkingFrame(f => f >= 2 ? 1 : f + 1);
         }, 250);
     };
 
@@ -354,7 +354,7 @@ function App() {
 
   const getAvatarSrc = () => {
     if (avatarState === 'thinking') return '/thinking.png';
-    if (avatarState === 'talking') return '/talking1.png';
+    if (avatarState === 'talking') return `/talking${talkingFrame}.png`;
     return '/idle.png';
   };
 
