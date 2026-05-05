@@ -50,7 +50,6 @@ export function AuthScreen({ onLogin, isDarkMode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', padding: '20px', textAlign: 'center' }}>
       <h1 style={{ marginBottom: '10px', display: 'flex', justifyContent: 'center' }}><img src={isDarkMode ? "/wonderquest_w.png" : "/wonderquest.png"} alt="WonderQuest" style={{ height: '2em' }} /></h1>
-      <p style={{ fontSize: '1.2em', marginBottom: '30px', opacity: 0.8, color: 'var(--text-color)' }}>Your Magical AI Learning Companion</p>
       
       <div className="modal-content" style={{ width: '100%', maxWidth: '400px', padding: '30px' }}>
         <h2>{isLogin ? 'Welcome Back!' : 'Create an Account'}</h2>
@@ -92,7 +91,7 @@ export function AuthScreen({ onLogin, isDarkMode }) {
         <button 
           onClick={handleGuest} 
           disabled={isLoading}
-          style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '2px solid var(--primary-color)', background: 'transparent', color: 'var(--primary-color)', fontSize: '1em', cursor: 'pointer', fontWeight: 'bold' }}
+          style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '2px solid var(--primary-color)', background: 'transparent', color: 'var(--primary-color)', fontSize: '1em', cursor: 'pointer', fontWeight: 'bold', fontFamily: 'inherit' }}
         >
           Continue as Guest
         </button>
